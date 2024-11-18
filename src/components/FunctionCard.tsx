@@ -3,13 +3,7 @@ import { DragSvg } from '../assets/svg';
 import ConnectDot from './ConnectDot';
 import { validateExpression } from '../utils';
 import { useDebounce } from '../hooks/useDebounce';
-
-interface Func {
-  id: number;
-  expression: string;
-  nextId: number | null;
-  position: { x: number; y: number };
-}
+import { Func } from '../types';
 
 interface props {
   func: Func;

@@ -1,3 +1,5 @@
+import { Func } from '../types';
+
 export const validateExpression = (expr: string) => {
   const validPattern = /^\d*x?([-+*/^]\d+x?)*$/i;
   return validPattern.test(expr);
@@ -50,4 +52,62 @@ export const calculateFunction = (input: string, expression: string) => {
   } catch (error) {
     return NaN;
   }
+};
+
+const constructSvg = (fromRect: DOMRect, toRect: DOMRect): SVGPathElement => {
+  const fromX = fromRect.left + fromRect.width / 2;
+  const fromY = fromRect.top + fromRect.height / 2;
+  const toX = toRect.left + toRect.width / 2;
+  const toY = toRect.top + toRect.height / 2;
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute(
+    'd',
+    `
+     M ${fromX} ${fromY} 
+     C ${fromX + 10} ${fromY - 10}, ${toX - 10} ${toY + 10}, ${toX} ${toY}
+     `
+  );
+  path.setAttribute('stroke', '#0066FF4F');
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke-width', '6');
+  return path;
+};
+
+export const drawConnections = (
+  svg: SVGSVGElement | null,
+  functions: Func[]
+) => {
+  if (!svg) return;
+
+  svg.innerHTML = '';
+
+  const fromEl = document.getElementById(`input-start`);
+  const toEl = document.getElementById(`input-1`);
+
+  if (!fromEl || !toEl) return;
+
+  const fromRect = fromEl?.getBoundingClientRect();
+  const toRect = toEl?.getBoundingClientRect();
+
+  const path = constructSvg(fromRect, toRect);
+
+  svg.appendChild(path);
+
+  functions.forEach(({ id, nextId }) => {
+    const fromEl = document.getElementById(`output-${id}`);
+    if (!fromEl) return;
+
+    const toEl = document.getElementById(`input-${nextId}`)
+      ? document.getElementById(`input-${nextId}`)
+      : document.getElementById(`output-end`);
+    if (!toEl) return;
+
+    const fromRect = fromEl?.getBoundingClientRect();
+    const toRect = toEl?.getBoundingClientRect();
+
+    const path = constructSvg(fromRect, toRect);
+
+    svg.appendChild(path);
+  });
 };

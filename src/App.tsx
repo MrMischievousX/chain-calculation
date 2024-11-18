@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ConnectDot from './components/ConnectDot';
 import FunctionCard from './components/FunctionCard';
-import { calculateFunction } from './utils';
+import { calculateFunction, drawConnections } from './utils';
 
 function App() {
   const [initialValue, setInitialValue] = useState(0);
@@ -13,6 +13,7 @@ function App() {
     { id: 4, expression: 'x-2', nextId: 5, position: { x: 0, y: 0 } },
     { id: 5, expression: 'x/2', nextId: 3, position: { x: 0, y: 0 } },
   ]);
+  const svgRef = useRef(null);
 
   const calculateChain = useCallback(() => {
     let currentId: number | null = 1;
@@ -40,6 +41,20 @@ function App() {
       )
     );
   };
+
+  useEffect(() => {
+    window.addEventListener('resize', () =>
+      drawConnections(svgRef?.current, functions)
+    );
+
+    return window.removeEventListener('resize', () =>
+      drawConnections(svgRef?.current, functions)
+    );
+  }, []);
+
+  useEffect(() => {
+    drawConnections(svgRef?.current, functions);
+  }, [functions]);
 
   useEffect(() => {
     const newResult = calculateChain();
@@ -89,12 +104,18 @@ function App() {
           </div>
           <input
             disabled
-            type='number'
+            type='text'
             value={result}
             className='w-2/3 px-4 h-full decoration-transparent outline-none text-lg text-black font-bold text-right'
           />
         </div>
       </div>
+
+      <svg
+        ref={svgRef}
+        className='absolute top-0 right-0 w-full h-full pointer-events-none'
+        xmlns='http://www.w3.org/2000/svg'
+      />
     </section>
   );
 }
