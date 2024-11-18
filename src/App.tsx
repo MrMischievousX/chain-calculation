@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ConnectDot from './components/ConnectDot';
 import FunctionCard from './components/FunctionCard';
+import { calculateFunction } from './utils';
 
 function App() {
   const [initialValue, setInitialValue] = useState(0);
@@ -13,6 +14,25 @@ function App() {
     { id: 5, expression: 'x/2', nextId: 3, position: { x: 0, y: 0 } },
   ]);
 
+  const calculateChain = useCallback(() => {
+    let currentId: number | null = 1;
+    let value = initialValue;
+
+    if (!value) {
+      return initialValue;
+    }
+
+    while (currentId) {
+      const func = functions.find((f) => f.id === currentId);
+      if (!func) break;
+
+      value = calculateFunction(value.toString(), func.expression);
+      currentId = func.nextId;
+    }
+
+    return value;
+  }, [functions, initialValue]);
+
   const handleExpressionChange = (id: number, newExpression: string) => {
     setFunctions(
       functions.map((f) =>
@@ -20,6 +40,11 @@ function App() {
       )
     );
   };
+
+  useEffect(() => {
+    const newResult = calculateChain();
+    setResult(newResult);
+  }, [initialValue, functions, calculateChain]);
 
   return (
     <section className='min-w-screen min-h-screen bg-home bg-cover flex p-20 justify-between'>
