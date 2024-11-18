@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DragSvg } from '../assets/svg';
 import ConnectDot from './ConnectDot';
+import { validateExpression } from '../utils';
+import { useDebounce } from '../hooks/useDebounce';
 
 interface Func {
   id: number;
@@ -12,12 +14,27 @@ interface Func {
 interface props {
   func: Func;
   functions: Func[];
+  handleExpressionChange: (id: number, exp: string) => void;
 }
 
-const FunctionCard = ({ func, functions }: props) => {
+const FunctionCard = ({ func, functions, handleExpressionChange }: props) => {
   const { id, expression, nextId } = func;
 
   const [input, setInput] = useState(expression);
+
+  const inputQuery = useDebounce(input, 500);
+
+  const handleChange = useCallback(() => {
+    if (!inputQuery || !validateExpression(inputQuery)) {
+      setInput(expression);
+    } else {
+      handleExpressionChange(id, inputQuery);
+    }
+  }, [expression, id, inputQuery]);
+
+  useEffect(() => {
+    handleChange();
+  }, [handleChange, inputQuery]);
 
   return (
     <div

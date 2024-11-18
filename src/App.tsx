@@ -13,6 +13,14 @@ function App() {
     { id: 5, expression: 'x/2', nextId: 3, position: { x: 0, y: 0 } },
   ]);
 
+  const handleExpressionChange = (id: number, newExpression: string) => {
+    setFunctions(
+      functions.map((f) =>
+        f.id === id ? { ...f, expression: newExpression } : f
+      )
+    );
+  };
+
   return (
     <section className='min-w-screen min-h-screen bg-home bg-cover flex p-20 justify-between'>
       <div className='max-w-[115px] flex justify-start items-center flex-col gap-2 mt-[171px]'>
@@ -37,7 +45,12 @@ function App() {
 
       <div className='relative flex flex-wrap justify-center items-center w-[80%] gap-32'>
         {functions.map((func) => (
-          <FunctionCard func={func} key={func.id} functions={functions} />
+          <FunctionCard
+            func={func}
+            key={func.id}
+            functions={functions}
+            handleExpressionChange={handleExpressionChange}
+          />
         ))}
       </div>
 
