@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { DragSvg } from '../assets/svg';
 import ConnectDot from './ConnectDot';
 import { validateExpression } from '../utils';
@@ -9,30 +9,28 @@ interface props {
   func: Func;
   functions: Func[];
   handleExpressionChange: (id: number, exp: string) => void;
+  updateNextId: (id: number, nextId: number) => void;
 }
 
-const FunctionCard = ({ func, functions, handleExpressionChange }: props) => {
+const FunctionCard = ({ func, functions, handleExpressionChange, updateNextId }: props) => {
   const { id, expression, nextId } = func;
 
   const [input, setInput] = useState(expression);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const inputQuery = useDebounce(input, 500);
 
-  const handleChange = useCallback(() => {
+  useEffect(() => {
     if (!inputQuery || !validateExpression(inputQuery)) {
       setInput(expression);
     } else {
       handleExpressionChange(id, inputQuery);
     }
-  }, [expression, id, inputQuery]);
-
-  useEffect(() => {
-    handleChange();
-  }, [handleChange, inputQuery]);
+  }, [expression, handleExpressionChange, id, inputQuery]);
 
   return (
     <div
-      draggable
+      ref={cardRef}
       className='w-[235px] h-[251px] bg-white flex flex-col justify-between items-start p-3 rounded-2xl border border-card_border shadow-[0px_0px_6px_0px_#0000000D] select-none'
     >
       <div className='flex w-full gap-2'>
@@ -68,21 +66,28 @@ const FunctionCard = ({ func, functions, handleExpressionChange }: props) => {
           Next Function
         </label>
         <select
-          disabled
+          onChange={(e) => updateNextId(id, Number(e.target.value))}
           className='block w-full outline-none h-[33px] border border-input_border px-2 rounded-lg mt-1 text-sm disabled:text-grey_text font-medium'
           value={nextId ?? ''}
           id={`${id}-nextId`}
         >
-          <option value={''} hidden>
+          <option value={-1}>
             -
           </option>
+
           {functions.map((funcOption) => {
+
+            if (funcOption.id === id) return <Fragment key={`option-${funcOption.id}`} />
+
             return (
               <option value={funcOption.id} key={`option-${funcOption.id}`}>
                 Function: {funcOption.id}
               </option>
             );
           })}
+          <option value={0} key={`option-0`}>
+            Output
+          </option>
         </select>
       </div>
       <div className='flex justify-between items-center w-full'>

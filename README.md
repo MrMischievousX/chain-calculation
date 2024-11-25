@@ -6,11 +6,11 @@ A web application that enables users to create and execute a chain of mathematic
 
 ## 🌟 Features
 
-- Chain of 5 interconnected mathematical functions
+- Chain of interconnected mathematical functions
 - Real-time calculation updates
 - Visual representation of function connections
 - Expression validation for mathematical operations
-- Fixed execution order (1 → 2 → 4 → 5 → 3)
+- Add new functions
 
 ## 🚀 Getting Started
 
@@ -71,7 +71,7 @@ src/
 interface FunctionNode {
   id: number;
   expression: string;
-  nextId: number | null;
+  nextId: number;
   position: { x: number; y: number };
 }
 

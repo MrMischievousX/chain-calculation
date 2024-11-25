@@ -1,6 +1,6 @@
 export interface Func {
   id: number;
   expression: string;
-  nextId: number | null;
+  nextId: number;
   position: { x: number; y: number };
 }

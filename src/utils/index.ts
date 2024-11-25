@@ -82,7 +82,7 @@ export const drawConnections = (
 
   svg.innerHTML = '';
 
-  const fromEl = document.getElementById(`input-start`);
+  const fromEl = document.getElementById(`start-0`);
   const toEl = document.getElementById(`input-1`);
 
   if (!fromEl || !toEl) return;
@@ -95,12 +95,15 @@ export const drawConnections = (
   svg.appendChild(path);
 
   functions.forEach(({ id, nextId }) => {
+    if (nextId === -1) {
+      return
+    }
+
     const fromEl = document.getElementById(`output-${id}`);
     if (!fromEl) return;
 
-    const toEl = document.getElementById(`input-${nextId}`)
-      ? document.getElementById(`input-${nextId}`)
-      : document.getElementById(`output-end`);
+    const toEl = document.getElementById(`input-${nextId}`) ? document.getElementById(`input-${nextId}`)
+      : document.getElementById(`end-0`);
     if (!toEl) return;
 
     const fromRect = fromEl?.getBoundingClientRect();
