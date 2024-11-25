@@ -96,7 +96,7 @@ function App() {
       window.scrollTo(0, 0)
       drawConnections(svgRef?.current, functions)
     }} className='overflow-y-hidden lg:overflow-auto'>
-      <section className='relative min-w-screen min-h-screen w-fit bg-home bg-contain flex flex-col lg:flex-row p-4 justify-between items-start overflow-auto'>
+      <section className='relative min-w-screen min-h-screen w-fit lg:w-screen bg-home bg-contain flex flex-col lg:flex-row p-4 justify-between items-start overflow-auto'>
         <div className='max-w-[115px] flex items-center flex-col gap-2 lg:h-screen justify-center'>
           <p className='bg-label rounded-full text-white text-xs font-bold h-[22px] flex items-center w-full justify-center'>
             Initial value of x
